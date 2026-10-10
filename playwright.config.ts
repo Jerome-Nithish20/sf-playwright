@@ -23,6 +23,9 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  /* Salesforce Lightning renders slowly on a cold runner; 5s (the default) is not
+     enough for the first form to appear and makes assertions flaky. */
+  expect: { timeout: 15_000 },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Headed locally for debugging; headless in CI, where there is no display. */
