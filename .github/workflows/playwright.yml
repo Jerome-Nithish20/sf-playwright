@@ -9,6 +9,10 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      # Promoted to job level so the notify step below can check whether mail is
+      # configured — `secrets` is not available in a step-level `if`.
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -32,3 +36,28 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+
+    # Only on a clean pass. Skipped silently when mail secrets are absent, so the
+    # job stays green if you have not configured SMTP yet.
+    - name: Email on test pass
+      if: ${{ success() && env.MAIL_USERNAME != '' }}
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        secure: true
+        username: ${{ secrets.MAIL_USERNAME }}
+        password: ${{ secrets.MAIL_PASSWORD }}
+        from: Playwright CI <${{ secrets.MAIL_USERNAME }}>
+        to: ${{ secrets.MAIL_TO }}
+        subject: "Playwright tests passed - ${{ github.repository }}"
+        body: |
+          All Playwright tests passed.
+
+          Repository: ${{ github.repository }}
+          Branch:     ${{ github.ref_name }}
+          Commit:     ${{ github.sha }}
+          Triggered:  ${{ github.event_name }}
+
+          Run details and the HTML report:
+          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
