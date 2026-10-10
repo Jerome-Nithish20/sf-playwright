@@ -1,0 +1,18 @@
+{
+  "name": "sf-playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.6.5",
+    "dotenv": "^18.0.7",
+    "jsonwebtoken": "^9.0.3"
+  }
+}
